@@ -16,7 +16,7 @@ public class BoardController {
 	@Autowired
 	private BoardService boardService;
 	
-	@RequestMapping(value="/counsilInfo")
+	@RequestMapping(value="/counsilInfo", method = RequestMethod.GET)
 	public String InfoBoard(BoardVO vo, Model model) {
 		model.addAttribute(boardService.counsilInfoBoard(vo));
 		boardService.counsilInfoBoard(vo);
