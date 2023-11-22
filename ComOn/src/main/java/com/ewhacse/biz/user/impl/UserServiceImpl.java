@@ -15,11 +15,13 @@ public class UserServiceImpl implements UserService {
 		this.userDAO = userDAO;
 	}
 	
-	public UserVO getUser(UserVO vo) {
-		return userDAO.getUser(vo);
+	@Override
+	public UserVO loginUser(UserVO vo) {
+		return userDAO.loginUser(vo);
 	}
 	
-	public UserVO registrationUser(UserVO vo) {
-		return userDAO.registrationUser(vo);
+	@Override
+	public void registrationUser(UserVO vo) {
+		userDAO.registrationUser(vo);
 	}
 }

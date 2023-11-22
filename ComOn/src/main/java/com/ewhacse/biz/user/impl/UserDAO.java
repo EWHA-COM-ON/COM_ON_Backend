@@ -17,17 +17,17 @@ public class UserDAO {
 	private ResultSet rs = null;
 	
 	//SQL 명령어
-	private final String USER_GET ="select * from user where id=? and pwd=?";
+	private final String USER_LOGIN ="select * from user where id=? and pwd=?";
 	private final String USER_INSERT = "insert into user(id,pwd,name,phone,num,email,address,level) values(?,?,?,?,?,?,?,3)";
 	
 	//CRUD
-	public UserVO getUser(UserVO vo) {
+	public UserVO loginUser(UserVO vo) {
 		UserVO user = null;
 		
 		try {
-			System.out.println("===> JDBC로 getUser 기능 처리");
+			System.out.println("===> JDBC로 loginUser 기능 처리");
 			conn = JDBCUtil.getConnection();
-			stmt = conn.prepareStatement(USER_GET);
+			stmt = conn.prepareStatement(USER_LOGIN);
 			stmt.setString(1, vo.getId());
 			stmt.setString(2, vo.getPwd());
 			rs = stmt.executeQuery();
@@ -49,8 +49,7 @@ public class UserDAO {
 	}
 	
 	//회원가입
-	public UserVO registrationUser(UserVO vo) {
-		UserVO user = null;
+	public void registrationUser(UserVO vo) {
 		try {
 			System.out.println("===> JDBC로 ResgistrationUser 기능 처리");
 			conn = JDBCUtil.getConnection();
@@ -68,6 +67,5 @@ public class UserDAO {
 		} finally {
 			JDBCUtil.close(stmt,conn);
 		}
-		return user;
 	}
 }
