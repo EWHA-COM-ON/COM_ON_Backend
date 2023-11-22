@@ -72,9 +72,5 @@ public class UserVO {
 	public void setLevel(int level) {
 		this.level = level;
 	}
-	
-	@Override
-	public String toString() {
-		return "UserVO [id = " +id+ ", password = " +pwd +"]";
-	}
+
 }

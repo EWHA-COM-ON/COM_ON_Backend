@@ -1,9 +1,9 @@
 package com.ewhacse.biz.user;
 
 public interface UserService {
-	//CRUD Method
-	public UserVO getUser(UserVO vo);
+	//로그인
+	UserVO loginUser(UserVO vo);
 	
 	//회원가입
-	UserVO registrationUser(UserVO vo);
+	void registrationUser(UserVO vo);
 }
