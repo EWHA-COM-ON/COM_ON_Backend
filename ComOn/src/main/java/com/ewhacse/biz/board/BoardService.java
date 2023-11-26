@@ -2,8 +2,11 @@ package com.ewhacse.biz.board;
 
 public interface BoardService {
 
-	BoardVO boardVO = new BoardVO();
+	CounInfoVO boardVO = new CounInfoVO();
 	
 	//학생회 정보
-	BoardVO counsilInfoBoard(BoardVO vo);
+	CounInfoVO counsilInfoBoard();
+	
+	//학생회 소개
+	CounPromVO counsilBoard();
 }

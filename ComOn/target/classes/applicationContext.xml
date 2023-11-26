@@ -49,5 +49,5 @@
 		<aop:pointcut id="txPointcut" expression="execution(* com.ewhacse.biz..*(..))" />
 		<aop:advisor pointcut-ref="txPointcut" advice-ref="txAdvice" />
 	</aop:config>
-	
+
 </beans>

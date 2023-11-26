@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ewhacse.biz.board.BoardService;
-import com.ewhacse.biz.board.BoardVO;
+import com.ewhacse.biz.board.CounInfoVO;
+import com.ewhacse.biz.board.CounPromVO;
+import com.ewhacse.biz.board.OrgChartNode;
 
 
 @Service("BoardService")
@@ -13,7 +15,12 @@ public class BoardServiceImpl implements BoardService{
 	private BoardDAO boardDAO;
 	
 	@Override
-	public BoardVO counsilInfoBoard(BoardVO vo) {
-		return boardDAO.counsilInfoBoard(vo);
+	public CounInfoVO counsilInfoBoard() {
+		return boardDAO.counsilInfoBoard();
+	}
+	
+	@Override
+	public CounPromVO counsilBoard() {
+		return boardDAO.counsilBoard();
 	}
 }

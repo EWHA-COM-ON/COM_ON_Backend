@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 
 import org.springframework.stereotype.Repository;
 
-import com.ewhacse.biz.board.BoardVO;
+import com.ewhacse.biz.board.CounInfoVO;
+import com.ewhacse.biz.board.CounPromVO;
+import com.ewhacse.biz.board.OrgChartNode;
 import com.ewhacse.biz.common.JDBCUtil;
 import com.ewhacse.biz.user.UserVO;
 
@@ -16,27 +18,27 @@ public class BoardDAO {
 	private PreparedStatement stmt = null;
 	private ResultSet rs = null;
 	
-	private final String CounsilInfo ="select * from counsil_Info  WHERE counnum is not null order by counnum desc limit 1";
-	
+	private final String CounsilInfo ="SELECT counnum, couninfo, counaddress, counlocation, counphone, counemail, countalk, couninsta FROM counsil_Info";
+	private final String CounsilPromise ="SELECT counpromise FROM counsil_Info";
+	private final String CounsilMember = "SELECT counsil_info.counpromise from counsil_info where counnum = (select max(counnum) from counsil_info);";
+
 	//학생회 정보 화면
-	public BoardVO counsilInfoBoard(BoardVO vo) {
+	public CounInfoVO counsilInfoBoard() {
 		System.out.println("===> JDBC로 counsilInfoBoard 기능 실행");
-		BoardVO board = null;
+		CounInfoVO board = null;
 		try {
 			conn = JDBCUtil.getConnection();
 			stmt = conn.prepareStatement(CounsilInfo);
 			rs = stmt.executeQuery();
 			if(rs.next()) {
-				board = new BoardVO();
-				board.setCounNum(rs.getInt("counNum"));
-				board.setCounName(rs.getString("counName"));
-				board.setCounInfo(rs.getString("counInfo"));
-				board.setCounAddress(rs.getString("counAddress"));
-				board.setCounLocation(rs.getString("counLocation"));
-				board.setCounPhone(rs.getString("counPhone"));
-				board.setCounEmail(rs.getString("counEmail"));
-				board.setCounTalk(rs.getString("counTalk"));
-				board.setCounInsta(rs.getString("counInsta"));
+				board = new CounInfoVO();
+				board.counsilInfoVO(rs.getString("counInfo"),
+									rs.getString("counAddress"),
+									rs.getString("counLocation"),
+									rs.getString("counPhone"),
+									rs.getString("counEmail"),
+									rs.getString("counTalk"),
+									rs.getString("counInsta"));
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -45,4 +47,97 @@ public class BoardDAO {
 		}
 		return board;
 	}
+	public CounPromVO counsilBoard() {
+		System.out.println("===> JDBC로 counsilBoard 기능 실행");
+		CounPromVO board = null;
+		try {
+			conn = JDBCUtil.getConnection();
+			stmt = conn.prepareStatement(CounsilPromise);
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				board = new CounPromVO();
+				board.counsilPromVO(rs.getString("counpromise"));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(rs,stmt,conn);
+		}
+		return board;
+	}
+	
+	//조직도 화면
+	public OrgChartNode getOrgChart() {
+		OrgChartNode root = new OrgChartNode("학생회", 0); //학생회 이름 DB로 수정해야함.
+		
+		try {
+			conn = JDBCUtil.getConnection();
+			PreparedStatement teamstmt = conn.prepareStatement("select distinct team from counsil_mem");
+			ResultSet teamRs = teamstmt.executeQuery();
+			while(teamRs.next()) {
+				String teamName = teamRs.getString("team");
+				OrgChartNode teamNode = new OrgChartNode(teamName, 0);
+				//각 팀에 속한 멤버 가져오기
+				try (PreparedStatement memberstmt = conn.prepareStatement("select * from counsil_mem where team = ?")){
+					memberstmt.setString(1, teamName);
+					try(ResultSet memberRs = memberstmt.executeQuery()){
+						while(memberRs.next()) {
+							String memberName = memberRs.getString("name");
+							int level = memberRs.getInt("teamlevel");
+							
+							OrgChartNode memberNode = new OrgChartNode(memberName, level);
+							
+							//특정 직급에 해당하는 부모 노드를 찾아서 자식으로 추가
+							OrgChartNode parentNode = findNode(teamNode, level-1);
+							if(parentNode != null) {
+								parentNode.addChild(memberNode);
+							} else {
+								teamNode.addChild(memberNode);
+							}
+							System.out.println("team" + teamName+ "level: "+level+"name: "+memberName );
+						}
+					}
+				}
+				root.addChild(teamNode);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(rs,stmt,conn);
+		}
+		return root;
+	}
+	
+	private OrgChartNode findNode(OrgChartNode root, int level) {
+		for (OrgChartNode child : root.getChildren()){
+			if(child.getLevel()==level) {
+				return child;
+			}
+			OrgChartNode found = findNode(child, level);
+			if(found != null) {
+				return found;
+			}
+		}
+		return null;
+	}
+	
+	//test
+	/*public BoardVO counsiltestBoard() {
+		System.out.println("===> JDBC로 counsilInfoBoard 기능 실행");
+		BoardVO board = null;
+		try {
+			conn = JDBCUtil.getConnection();
+			stmt = conn.prepareStatement(CounsilInfo);
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				board = new BoardVO();
+				board.counsilInfoVO(rs.getString("counInfo"), rs.getString("counAddress"));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtil.close(rs,stmt,conn);
+		}
+		return board;
+	}*/
 }
