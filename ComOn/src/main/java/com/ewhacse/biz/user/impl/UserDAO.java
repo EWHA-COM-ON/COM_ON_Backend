@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import org.springframework.stereotype.Repository;
 
 import com.ewhacse.biz.common.JDBCUtil;
+import com.ewhacse.biz.user.UserLoginVO;
 import com.ewhacse.biz.user.UserVO;
 
 @Repository("userDAO")
@@ -17,12 +18,12 @@ public class UserDAO {
 	private ResultSet rs = null;
 	
 	//SQL 명령어
-	private final String USER_LOGIN ="select * from user where id=? and pwd=?";
+	private final String USER_LOGIN ="select id, pwd from user where id=? and pwd=?";
 	private final String USER_INSERT = "insert into user(id,pwd,name,phone,num,email,address,level) values(?,?,?,?,?,?,?,3)";
 	
 	//CRUD
-	public UserVO loginUser(UserVO vo) {
-		UserVO user = null;
+	public UserLoginVO loginUser(UserLoginVO vo) {
+		UserLoginVO user = null;
 		
 		try {
 			System.out.println("===> JDBC로 loginUser 기능 처리");
@@ -32,13 +33,8 @@ public class UserDAO {
 			stmt.setString(2, vo.getPwd());
 			rs = stmt.executeQuery();
 			if(rs.next()) {
-				user = new UserVO();
-				user.setId(rs.getString("ID"));
-				user.setPwd(rs.getString("PWD"));
-				user.setName(rs.getString("NAME"));
-				user.setNum(rs.getString("NUM"));
-				user.setPhone(rs.getString("PHONE"));
-
+				user = new UserLoginVO();
+				user.UserloginVO(rs.getString("id"),rs.getString("pwd"));
 			}
 		}catch (Exception e) {
 			e.printStackTrace();

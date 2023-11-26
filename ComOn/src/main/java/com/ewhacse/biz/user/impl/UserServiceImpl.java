@@ -3,6 +3,7 @@ package com.ewhacse.biz.user.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ewhacse.biz.user.UserLoginVO;
 import com.ewhacse.biz.user.UserService;
 import com.ewhacse.biz.user.UserVO;
 
@@ -16,7 +17,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public UserVO loginUser(UserVO vo) {
+	public UserLoginVO loginUser(UserLoginVO vo) {
 		return userDAO.loginUser(vo);
 	}
 	

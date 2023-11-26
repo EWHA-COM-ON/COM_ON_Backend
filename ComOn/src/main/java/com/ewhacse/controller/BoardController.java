@@ -27,21 +27,21 @@ public class BoardController {
 	
 	@ApiOperation("학생회 정보 페이지")
 	@ResponseBody 
-	@RequestMapping(value="/counsilInfo", method = RequestMethod.POST)
+	@RequestMapping(value="/counsilInfo", method = RequestMethod.GET)
 	public CounInfoVO InfoBoard(Model model) {
 		return boardService.counsilInfoBoard();
 	}
 	
 	@ApiOperation("학생회 공약 페이지")
 	@ResponseBody
-	@RequestMapping(value="/counsilPromise", method = RequestMethod.POST)
+	@RequestMapping(value="/counsilPromise", method = RequestMethod.GET)
 	public CounPromVO counsilBoard() {
 		return boardService.counsilBoard();
 	}
 	
 	@ApiOperation("학생회 멤버 페이지")
 	@ResponseBody
-	@RequestMapping(value="/counsilMem", method = RequestMethod.POST)
+	@RequestMapping(value="/counsilMem", method = RequestMethod.GET)
 	public OrgChartNode counsilMemBoard() {
 		BoardDAO boardDAO = new BoardDAO();
 		OrgChartNode orgChart = boardDAO.getOrgChart();
