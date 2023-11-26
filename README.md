@@ -5,3 +5,6 @@
 * 로그인, 회원가입 기능 업그레이드 필요 
 
 11/12 swagger 페이지 http://localhost:8080/comon/swagger-ui.html, 학생회 db + controller 구현 
+11/27 학생회 정보 + 학생회 멤버(조직도) 구현 
+** swagger 접속 -> 포트포워딩 문제인 듯 한데,, 지금 당장 해결할 방법이 없어서 대체재로 ngrok 이용 
+https://93a4-119-192-184-47.ngrok-free.app/comon/swagger-ui.html#/user-controller
