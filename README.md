@@ -10,3 +10,5 @@
 ** swagger 접속 -> 포트포워딩 문제인 듯 한데,, 지금 당장 해결할 방법이 없어서 대체재로 ngrok 이용
 
 https://93a4-119-192-184-47.ngrok-free.app/comon/swagger-ui.html#/user-controller
+
+12/02 메인페이지 월별 일정 구현 .. 로그인 기능 아직도 수정 못 함 .. 
