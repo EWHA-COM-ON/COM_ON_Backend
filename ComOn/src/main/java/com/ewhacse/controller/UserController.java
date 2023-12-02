@@ -29,31 +29,25 @@ public class UserController {
 	private UserService userService;
 	
 	
-    public ResponseEntity<String> login(@ModelAttribute UserLoginVO vo) {
-        boolean success;
-        
-        if(userService.loginUser(vo) != null) {
-        	success = true;
-        }else {
-        	success = false;
-        }
+    /*public ResponseEntity<String> login(@ModelAttribute UserLoginVO vo) {
+        boolean success = userService.loginUser(vo);
 
         if (success) {
             return new ResponseEntity<>("Login successful", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Login failed", HttpStatus.UNAUTHORIZED);
         }
-    }
+    }*/
 	
     @ApiOperation("로그인(post)")
-	@RequestMapping(value="/login", method=RequestMethod.POST)
+	@RequestMapping(value="/login.do", method=RequestMethod.POST)
 	public String login(UserLoginVO vo, UserDAO userDAO, @ApiIgnore HttpSession session) {
 		if(vo.getId() == null || vo.getId().equals("")) {
 			throw new IllegalArgumentException("아이디는 반드시 입력해야 합니다.");
 		}
-		UserLoginVO user= userDAO.loginUser(vo);
-		if(user != null) {
-			session.setAttribute("userid", user.getId());
+		boolean user= userDAO.loginUser(vo.getId(), vo.getPwd());
+		if(user) {
+			//session.setAttribute("userid", user.getId());
 			return "로그인성공";
 		}
 		else return "로그인 실패";

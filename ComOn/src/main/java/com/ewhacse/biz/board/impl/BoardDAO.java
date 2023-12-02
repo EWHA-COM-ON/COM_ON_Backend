@@ -3,9 +3,13 @@ package com.ewhacse.biz.board.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.ewhacse.biz.board.CounEventVO;
 import com.ewhacse.biz.board.CounInfoVO;
 import com.ewhacse.biz.board.CounPromVO;
 import com.ewhacse.biz.board.OrgChartNode;
@@ -18,10 +22,10 @@ public class BoardDAO {
 	private PreparedStatement stmt = null;
 	private ResultSet rs = null;
 	
-	private final String CounsilInfo ="SELECT counnum, couninfo, counaddress, counlocation, counphone, counemail, countalk, couninsta FROM counsil_Info";
-	private final String CounsilPromise ="SELECT counpromise FROM counsil_Info";
-	private final String CounsilMember = "SELECT counsil_info.counpromise from counsil_info where counnum = (select max(counnum) from counsil_info);";
-
+	private final String CounsilInfo ="SELECT counnum, couninfo, counaddress, counlocation, counphone, counemail, countalk, couninsta FROM counsil_Info where counnum = (select max(counnum) from counsil_info)";
+	private final String CounsilPromise ="SELECT counpromise FROM counsil_Info where counnum = (select max(counnum) from counsil_info)";
+	private final String CounsilEvent = "SELECT * FROM counsil_event where counnum = (select max(counnum) from counsil_info)";
+	
 	//학생회 정보 화면
 	public CounInfoVO counsilInfoBoard() {
 		System.out.println("===> JDBC로 counsilInfoBoard 기능 실행");
@@ -47,6 +51,7 @@ public class BoardDAO {
 		}
 		return board;
 	}
+	//학생회 공약 화면
 	public CounPromVO counsilBoard() {
 		System.out.println("===> JDBC로 counsilBoard 기능 실행");
 		CounPromVO board = null;
@@ -72,7 +77,7 @@ public class BoardDAO {
 		
 		try {
 			conn = JDBCUtil.getConnection();
-			PreparedStatement teamstmt = conn.prepareStatement("select distinct team from counsil_mem");
+			PreparedStatement teamstmt = conn.prepareStatement("select distinct team from counsil_mem where counnum = (select max(counnum) from counsil_info)");
 			ResultSet teamRs = teamstmt.executeQuery();
 			while(teamRs.next()) {
 				String teamName = teamRs.getString("team");
@@ -121,23 +126,29 @@ public class BoardDAO {
 		return null;
 	}
 	
-	//test
-	/*public BoardVO counsiltestBoard() {
-		System.out.println("===> JDBC로 counsilInfoBoard 기능 실행");
-		BoardVO board = null;
+	//월별 행사
+	public List<CounEventVO> findAll() {
+		List<CounEventVO> events = new ArrayList<>();
+		
 		try {
 			conn = JDBCUtil.getConnection();
-			stmt = conn.prepareStatement(CounsilInfo);
+			stmt = conn.prepareStatement(CounsilEvent);
 			rs = stmt.executeQuery();
-			if(rs.next()) {
-				board = new BoardVO();
-				board.counsilInfoVO(rs.getString("counInfo"), rs.getString("counAddress"));
+			while (rs.next()) {
+				CounEventVO event = mapRowToEvent(rs);
+				events.add(event);
 			}
-		}catch (Exception e) {
+		}catch(Exception e) {
 			e.printStackTrace();
-		} finally {
+		}finally {
 			JDBCUtil.close(rs,stmt,conn);
 		}
-		return board;
-	}*/
+		return events;	
+	}
+	private CounEventVO mapRowToEvent(ResultSet rs) throws SQLException {
+		CounEventVO event = new CounEventVO();
+		event.CounEventVO(rs.getInt("seq"), rs.getInt("counnum"), rs.getString("name"), rs.getString("info"), rs.getDate("date"));
+		return event;
+	}
+	
 }

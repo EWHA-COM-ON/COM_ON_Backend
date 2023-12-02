@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.ewhacse.biz.common.JDBCUtil;
@@ -18,30 +20,31 @@ public class UserDAO {
 	private ResultSet rs = null;
 	
 	//SQL 명령어
-	private final String USER_LOGIN ="select id, pwd from user where id=? and pwd=?";
+	private final String USER_LOGIN ="select * from user where id=? and pwd=?";
 	private final String USER_INSERT = "insert into user(id,pwd,name,phone,num,email,address,level) values(?,?,?,?,?,?,?,3)";
 	
 	//CRUD
-	public UserLoginVO loginUser(UserLoginVO vo) {
-		UserLoginVO user = null;
-		
+	public boolean loginUser(String id, String pwd) {
+		boolean result;
 		try {
 			System.out.println("===> JDBC로 loginUser 기능 처리");
 			conn = JDBCUtil.getConnection();
 			stmt = conn.prepareStatement(USER_LOGIN);
-			stmt.setString(1, vo.getId());
-			stmt.setString(2, vo.getPwd());
+			stmt.setString(1, id);
+			stmt.setString(2, pwd);
 			rs = stmt.executeQuery();
-			if(rs.next()) {
-				user = new UserLoginVO();
-				user.UserloginVO(rs.getString("id"),rs.getString("pwd"));
+			if (rs.next()){
+				result = rs.next();
+				System.out.println(result + "+" + rs.getString(1) + rs.getString(2));
+				return result;
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		} finally {
 			JDBCUtil.close(rs,stmt,conn);
 		}
-		return user;
+		return false;
 	}
 	
 	//회원가입

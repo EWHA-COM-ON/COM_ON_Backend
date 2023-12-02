@@ -1,5 +1,8 @@
 package com.ewhacse.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ewhacse.biz.board.BoardService;
+import com.ewhacse.biz.board.CounEventVO;
 import com.ewhacse.biz.board.CounInfoVO;
 import com.ewhacse.biz.board.CounPromVO;
 import com.ewhacse.biz.board.OrgChartNode;
@@ -25,21 +29,21 @@ public class BoardController {
 	@Autowired
 	private BoardService boardService;
 	
-	@ApiOperation("학생회 정보 페이지")
+	@ApiOperation("학생회 정보")
 	@ResponseBody 
 	@RequestMapping(value="/counsilInfo", method = RequestMethod.GET)
 	public CounInfoVO InfoBoard(Model model) {
 		return boardService.counsilInfoBoard();
 	}
 	
-	@ApiOperation("학생회 공약 페이지")
+	@ApiOperation("학생회 공약")
 	@ResponseBody
 	@RequestMapping(value="/counsilPromise", method = RequestMethod.GET)
 	public CounPromVO counsilBoard() {
 		return boardService.counsilBoard();
 	}
 	
-	@ApiOperation("학생회 멤버 페이지")
+	@ApiOperation("학생회 멤버(조직도)")
 	@ResponseBody
 	@RequestMapping(value="/counsilMem", method = RequestMethod.GET)
 	public OrgChartNode counsilMemBoard() {
@@ -47,4 +51,12 @@ public class BoardController {
 		OrgChartNode orgChart = boardDAO.getOrgChart();
 		return orgChart;
 	}
+	
+	@ApiOperation("월별 일정")
+	@ResponseBody
+    @RequestMapping(value="/events", method = RequestMethod.GET)
+    public Map<String, List<CounEventVO>> getEvents(Model model) {
+        Map<String, List<CounEventVO>> events = boardService.getEventsGroupedByMonth();
+        return events;
+    }
 }

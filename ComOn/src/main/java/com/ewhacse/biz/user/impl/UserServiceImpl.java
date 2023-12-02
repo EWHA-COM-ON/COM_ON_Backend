@@ -17,8 +17,8 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public UserLoginVO loginUser(UserLoginVO vo) {
-		return userDAO.loginUser(vo);
+	public boolean loginUser(UserLoginVO vo) {
+		return userDAO.loginUser(vo.getId(), vo.getPwd());
 	}
 	
 	@Override
